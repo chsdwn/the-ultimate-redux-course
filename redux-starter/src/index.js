@@ -1,9 +1,4 @@
-function sayHello() {
-  return function () {
-    return "Hello World";
-  };
-}
+setTimeout(() => console.log("hello"), 1000);
 
-const fn = sayHello();
-const message = fn();
-console.log(message);
+const numbers = [1, 2, 3];
+numbers.map((n) => console.log(n * 2));
