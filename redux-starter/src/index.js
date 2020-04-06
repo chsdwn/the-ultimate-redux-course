@@ -1,13 +1,13 @@
-import { Map } from "immutable";
+import { produce } from "immer";
 
-let book = Map({ title: "Otostopçunun Galaksi Rehberi" });
+let book = { title: "Otostopçunun Galaksi Rehberi" };
 
 function publish(book) {
-  return book.set("isPublished", true);
+  return produce(book, (draftBook) => {
+    draftBook.isPublished = true;
+  });
 }
 
 book = publish(book);
 
-console.log(book.get("title"));
-console.log(book.get("isPublished"));
-console.log(book.toJS());
+console.log(book);
