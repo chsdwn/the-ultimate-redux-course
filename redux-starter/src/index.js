@@ -1,19 +1,18 @@
 import store from "./store";
+import * as actions from "./actionTypes";
 
-const unsubscribe = store.subscribe(() =>
-  console.log("store changed", store.getState())
-);
+// state = reducer(state, action)
+// notify the subscribers
 
 store.dispatch({
-  type: "bugAdded",
+  type: actions.BUG_ADDED,
   payload: {
     description: "Bug1",
   },
 });
 
-unsubscribe();
 store.dispatch({
-  type: "bugRemoved",
+  type: actions.BUG_REMOVED,
   payload: {
     id: 1,
   },
