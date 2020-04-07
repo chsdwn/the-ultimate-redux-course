@@ -29,6 +29,7 @@ const slice = createSlice({
 export const { bugAdded, bugRemoved, bugResolved } = slice.actions;
 export default slice.reducer;
 
+// Selectors
 // Memoization
 // f(x) => y { input: 1, output: 2 }
 export const getUnresolvedBugs = createSelector(
