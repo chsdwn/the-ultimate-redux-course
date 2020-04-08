@@ -67,23 +67,54 @@ describe("bugsSlice", () => {
     expect(bugsSlice().list[0].resolved).not.toBe(true);
   });
 
-  it("bugResolved", () => {
-    const bug = { id: 1, description: "a" };
+  describe("loading bugs", () => {
+    describe("if the bugs exist in the cache", () => {
+      it("they should not be fetched from the server again", async () => {
+        fakeAxios.onGet("/bugs").reply(200, [{ id: 1 }]);
 
-    store.dispatch({ type: bugAdded.type, payload: bug });
-    store.dispatch({ type: bugResolved.type, payload: { id: bug.id } });
+        await store.dispatch(loadBugs());
+        await store.dispatch(loadBugs());
 
-    expect(bugsSlice().list[0].resolved).toEqual(true);
-  });
+        expect(fakeAxios.history.get.length).toBe(1);
+      });
+    });
 
-  it("loadBugs", async () => {
-    const bug = { id: 1, description: "a" };
-    const bug2 = { id: 2, description: "b" };
+    describe("if the bugs don't exist in the cache", () => {
+      it("they should be fetched from the server and put in the store", async () => {
+        fakeAxios.onGet("/bugs").reply(200, [{ id: 1 }]);
 
-    await store.dispatch({ type: bugAdded.type, payload: bug });
-    await store.dispatch({ type: bugAdded.type, payload: bug2 });
+        await store.dispatch(loadBugs());
 
-    expect(bugsSlice().list).toHaveLength(2);
+        expect(bugsSlice().list).toHaveLength(1);
+      });
+
+      describe("loading indicator", () => {
+        it("should be true while fetching bugs", () => {
+          fakeAxios.onGet("/bugs").reply(() => {
+            expect(bugsSlice().loading).toBe(true);
+            return [200, [{ id: 1 }]];
+          });
+
+          store.dispatch(loadBugs());
+        });
+
+        it("should be false while the bugs are fetched", async () => {
+          fakeAxios.onGet("/bugs").reply(200, [{ id: 1 }]);
+
+          await store.dispatch(loadBugs());
+
+          expect(bugsSlice().loading).toBe(false);
+        });
+
+        it("should be false if the server returns an error", async () => {
+          fakeAxios.onGet("/bugs").reply(200, [{ id: 1 }]);
+
+          await store.dispatch(loadBugs());
+
+          expect(bugsSlice().loading).toBe(false);
+        });
+      });
+    });
   });
 
   describe("selectors", () => {
