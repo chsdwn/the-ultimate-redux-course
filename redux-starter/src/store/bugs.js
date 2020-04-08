@@ -3,8 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
 
-let lastId = 0;
-
 const slice = createSlice({
   name: "bugs",
   initialState: {
@@ -15,11 +13,7 @@ const slice = createSlice({
   reducers: {
     // actions => action handlers
     bugAdded: (bugs, action) => {
-      bugs.list.push({
-        id: ++lastId,
-        description: action.payload.description,
-        resolved: false,
-      });
+      bugs.list.push(action.payload);
     },
     bugAssignedToUser: (bugs, action) => {
       const { bugId, userId } = action.payload;
@@ -62,6 +56,14 @@ export default slice.reducer;
 // Action Creators
 const url = "/bugs";
 
+export const addBug = (bug) =>
+  apiCallBegan({
+    url,
+    method: "post",
+    data: bug,
+    onSuccess: bugAdded.type,
+  });
+
 export const loadBugs = () => (dispatch, getState) => {
   const { lastFetch } = getState().entities.bugs;
 
@@ -77,14 +79,6 @@ export const loadBugs = () => (dispatch, getState) => {
     })
   );
 };
-
-// export const loadBugs = () =>
-//   apiCallBegan({
-//     url,
-//     onStart: bugsRequested.type,
-//     onSuccess: bugsReceived.type,
-//     onError: bugsRequestFailed.type,
-//   });
 
 // Selectors
 // Memoization
