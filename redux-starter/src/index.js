@@ -1,11 +1,6 @@
 import configureStore from "./store/configureStore";
-import * as apiActions from "./store/api";
+import { loadBugs } from "./store/bugs";
 
 const store = configureStore();
 
-store.dispatch(
-  apiActions.apiCallBegan({
-    url: "/bugs",
-    onSuccess: "bugsReceived",
-  })
-);
+store.dispatch(loadBugs());
