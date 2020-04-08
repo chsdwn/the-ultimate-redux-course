@@ -7,6 +7,11 @@ import toast from "./middleware/toast";
 export default function () {
   return configureStore({
     reducer,
-    middleware: [...getDefaultMiddleware(), logger("console"), toast, api],
+    middleware: [
+      ...getDefaultMiddleware(),
+      // logger("console"),
+      toast,
+      api,
+    ],
   });
 }
