@@ -20,6 +20,7 @@ describe("bugsSlice", () => {
   });
 
   const bugsSlice = () => store.getState().entities.bugs;
+  const createState = () => ({ entities: { bugs: { list: [] } } });
 
   it("should add the bug to the store if it's saved to the server", async () => {
     // AAA pattern
@@ -64,13 +65,18 @@ describe("bugsSlice", () => {
     expect(bugsSlice().list).toHaveLength(2);
   });
 
-  it("getUnresolvedBugs", async () => {
-    const bug = { id: 1, description: "a", resolved: true };
-    const bug2 = { id: 2, description: "b", resolved: false };
+  describe("selectors", () => {
+    it("getUnresolvedBugs", () => {
+      const state = createState();
+      state.entities.bugs.list = [
+        { id: 1, resolved: true },
+        { id: 2 },
+        { id: 3 },
+      ];
 
-    await store.dispatch({ type: bugAdded.type, payload: bug });
-    await store.dispatch({ type: bugAdded.type, payload: bug2 });
+      const result = getUnresolvedBugs(state);
 
-    expect(bugsSlice().list.filter((b) => !b.resolved)).toHaveLength(1);
+      expect(result).toHaveLength(2);
+    });
   });
 });
