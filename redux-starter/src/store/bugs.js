@@ -24,6 +24,7 @@ const slice = createSlice({
       const index = bugs.list.findIndex((b) => b.id === action.payload.id);
       bugs.list.splice(index, 1);
     },
+    // resolveBug(command) - bugResolved(event)
     bugResolved: (bugs, action) => {
       const index = bugs.list.findIndex((b) => b.id === action.payload.id);
       bugs.list[index].resolved = true;
@@ -79,6 +80,14 @@ export const loadBugs = () => (dispatch, getState) => {
     })
   );
 };
+
+export const resolveBug = (id) =>
+  apiCallBegan({
+    url: `${url}/${id}`,
+    method: "patch",
+    data: { resolved: true },
+    onSuccess: bugResolved.type,
+  });
 
 // Selectors
 // Memoization
